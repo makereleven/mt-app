@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import CryptoJS from 'crypto-js'
 export default {
   layout: "blank",
   data() {
@@ -128,10 +129,9 @@ export default {
         }).then(({status,data})=>{
           if(status === 200 && data && data.code === 0){
             let count = 60
-            self.statusMsg = `验证码已经发送，剩余${count--}秒`
             self.timerid = setInterval(function(){
               self.statusMsg = `验证码已经发送，剩余${count--}秒`
-              if(count === 0){
+              if(count === -1){
                 clearInterval(self.timerid)
               }
             },1000)
@@ -142,7 +142,31 @@ export default {
       }
     },
     register(){
-
+      let self = this
+      this.$refs['ruleForm'].validate((vaild)=>{
+        if(vaild){
+          self.$axios.post('/users/signup',{
+            username:window.encodeURIComponent(self.ruleForm.name),
+            password:CryptoJS.MD5(self.ruleForm.pwd).toString(),
+            email:self.ruleForm.email,
+            code:self.ruleForm.code
+          }).then(({status,data})=>{
+            console.log('status,data',status,data)
+            if(status === 200){
+              if(data&&data.code === 0){
+                location.href='/login'
+              }
+            }else{
+              self.error = data.msg
+            }
+          })
+        }else{
+          self.error = `服务器出错，错误码:${status}`
+        }
+        setInterval(function(){
+          self.error = ''
+        },1000)
+      })
     }
   }
 }
