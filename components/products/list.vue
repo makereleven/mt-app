@@ -2,10 +2,10 @@
   <div class="m-products-list">
     <dl>
       <dd
-        v-for="item in nav"
+        v-for="(item,index) in nav"
         :key="item.name"
         :class="[item.name,item.acitve?'s-nav-active':'']"
-        @click="navSelect"
+        @click="navSelect(item,index)"
       >{{ item.txt }}</dd>
     </dl>
     <ul>
@@ -59,8 +59,18 @@ export default {
     return { items: data.list }
   },
   methods: {
-    navSelect: function () {
-      console.log('select')
+    navSelect: function (item,index) {
+      switch(item.name){
+        case "s-comment":
+          if(item.txt === '评价最高'){
+            this.nav[index].txt = '评价最低'
+            this.list.sort((a,b)=>a.rate-b.rate)
+          }else{
+            this.nav[index].txt = '评价最高'
+            this.list.sort((a,b)=>b.rate-a.rate)
+          }
+          break
+      }
     }
   }
 }

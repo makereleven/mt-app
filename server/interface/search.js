@@ -110,7 +110,7 @@ router.get('/resultsByKeywords', async (ctx) => {
 
 router.get('/products', async (ctx) => {
   let keyword = ctx.query.keyword || '旅游'
-  let city = ctx.query.city || '北京'
+  let city = ctx.query.city || '广州'
   let {
     status,
     data: {
